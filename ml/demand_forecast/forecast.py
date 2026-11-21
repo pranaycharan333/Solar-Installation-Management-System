@@ -208,7 +208,8 @@ def forecast(history: pd.DataFrame, horizon_months: int = 3, minimum_rows: int =
                 "model": model_name,
                 "model_version": "1.0.0",
                 "fallback_reason": fallback_reason,
-                "demo_data": bool(group["is_synthetic"].astype(str).str.lower().eq("true").all()),
+                # A forecast that used any synthetic history must remain labeled as demo data.
+                "demo_data": bool(group["is_synthetic"].astype(str).str.lower().eq("true").any()),
                 "review_needed": True,
             })
     return results

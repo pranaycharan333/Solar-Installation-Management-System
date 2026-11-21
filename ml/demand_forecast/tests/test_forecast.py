@@ -26,6 +26,15 @@ class ForecastBehaviorTests(unittest.TestCase):
             self.assertIn("fallback_reason", row)
             self.assertGreaterEqual(row["predicted_quantity"], 0)
 
+    def test_mixed_synthetic_history_stays_labeled_as_demo_data(self):
+        material_id = self.records[0]["material_id"]
+        material_rows = [dict(row) for row in self.records if row["material_id"] == material_id]
+        material_rows[-1]["is_synthetic"] = False
+
+        results = forecast_records(material_rows)
+
+        self.assertTrue(all(row["demo_data"] for row in results))
+
     def test_validation_and_holdout_are_separate_chronological_windows(self):
         history = load_history(REPOSITORY_ROOT / "ml" / "demand_forecast" / "sample_history.csv")
         report = evaluate(history)[0]

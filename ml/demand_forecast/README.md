@@ -47,7 +47,7 @@ From the repository root, import the public functions with `from ml.demand_forec
 
 ## Output fields
 
-Each forecast row includes `material_id`, `forecast_period`, `predicted_quantity`, `unit`, `model`, `model_version`, `fallback_reason`, `demo_data`, and `review_needed`. `fallback_reason` is `null` when a regression model is selected and identifies incomplete or insufficient history when the mean fallback is used. These are provisional fields; confirm names and units with Bharath before backend integration.
+Each forecast row includes `material_id`, `forecast_period`, `predicted_quantity`, `unit`, `model`, `model_version`, `fallback_reason`, `demo_data`, and `review_needed`. `fallback_reason` is `null` when a regression model is selected and identifies incomplete or insufficient history when the mean fallback is used. `demo_data` is true if any history row for that material is synthetic, so mixing synthetic and real rows cannot make a forecast appear production-only. These are provisional fields; confirm names and units with Bharath before backend integration.
 
 ## Evaluation and limits
 
