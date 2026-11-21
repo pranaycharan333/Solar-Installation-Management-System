@@ -38,6 +38,17 @@ python -m ml.demand_forecast.demo
 
 The demo prints validation and holdout scores followed by three months of advisory forecasts. The sample history is synthetic and clearly marked as such. The module forecasts demand only; the backend must calculate stock, reorder quantities, prices, and purchase orders from authoritative records.
 
+### Run the provisional forecast HTTP adapter
+
+Install the optional service dependencies and start the local API:
+
+```powershell
+python -m pip install -r ml/demand_forecast/service-requirements.txt
+python -m uvicorn ml.demand_forecast.api:app --reload
+```
+
+`GET /health` checks that it started; `POST /api/v1/forecast` accepts the example request shape from `ml/demand_forecast/examples/forecast_request.json`. The route and error fields are provisional until the backend owner confirms the shared API contract. This local adapter does not provide authentication, database storage, stock calculations, or purchasing.
+
 Verify the forecast rules from the repository root with `python -m unittest discover -s ml/demand_forecast/tests -v`. The same checks and demo run automatically in GitHub Actions when forecast files change.
 
 See `ml/demand_forecast/README.md` for the input format and model details, and `ml/demand_forecast/INTEGRATION.md` for the proposed fields and decisions awaiting backend agreement.

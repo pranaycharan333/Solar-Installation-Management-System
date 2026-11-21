@@ -45,6 +45,10 @@ These checks verify the demo request, chronological split, fallback behavior, an
 
 From the repository root, import the public functions with `from ml.demand_forecast import evaluate, forecast, forecast_records, load_history`. Then call `history = load_history()`, `metrics = evaluate(history)`, and `results = forecast(history)`. A backend handling JSON records can pass `request["history"]` to `forecast_records(records, horizon_months=3)`; this adapter uses the same validation as CSV input. The example response is intentionally generated from demo data and is provisional until Bharath confirms the contract.
 
+## Optional HTTP adapter
+
+`api.py` wraps the same model in a small FastAPI service so teammates can try the JSON request over HTTP. From the repository root, install `ml/demand_forecast/service-requirements.txt` and run `python -m uvicorn ml.demand_forecast.api:app --reload`. The provisional endpoints are `GET /health` and `POST /api/v1/forecast`; interactive API documentation is available at `/docs`. Invalid request shapes or history return HTTP 422 with an `error.code` and `error.message`. This adapter has no login, database, stock updates, or purchasing behavior, and Bharath must confirm or replace the route and error contract before production integration.
+
 ## Output fields
 
 Each forecast row includes `material_id`, `forecast_period`, `predicted_quantity`, `unit`, `model`, `model_version`, `fallback_reason`, `demo_data`, and `review_needed`. `fallback_reason` is `null` when a regression model is selected and identifies incomplete or insufficient history when the mean fallback is used. `demo_data` is true if any history row for that material is synthetic, so mixing synthetic and real rows cannot make a forecast appear production-only. These are provisional fields; confirm names and units with Bharath before backend integration.

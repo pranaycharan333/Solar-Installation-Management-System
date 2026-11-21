@@ -32,6 +32,8 @@ results = forecast_records(request["history"], horizon_months=3)
 
 `history_dataframe` must use the fields above and contain parsed monthly usage rows. `forecast()` returns one result per material and forecast month. It selects a candidate using a six-month chronological validation window, then reports its score on a separate, later six-month holdout; with fewer than 24 rows for a material, it falls back to the historical mean. This choice is a prototype rule, not yet a production model-selection policy.
 
+An optional FastAPI wrapper is available in `api.py` for trying the current JSON shape over HTTP: `GET /health` and `POST /api/v1/forecast`. It uses HTTP 422 errors shaped as `{"error":{"code":"...","message":"..."}}`. This route and error shape remain provisional and do not replace the shared backend's authentication, persistence, or API contract.
+
 ## Provisional result shape
 
 ```json
