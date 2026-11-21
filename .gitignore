@@ -1,4 +1,4 @@
-﻿# Python cache and virtual environments
+# Python cache and virtual environments
 __pycache__/
 *.py[cod]
 .venv/
@@ -8,3 +8,9 @@ venv/
 .env
 .env.*
 !.env.example
+# JavaScript dependencies and build output
+node_modules/
+dist/
+.vite/
+coverage/
+*.tsbuildinfo
