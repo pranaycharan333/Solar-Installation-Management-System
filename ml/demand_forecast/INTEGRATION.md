@@ -42,12 +42,13 @@ results = forecast_records(request["history"], horizon_months=3)
   "unit": "piece",
   "model": "linear_regression",
   "model_version": "1.0.0",
+  "fallback_reason": null,
   "demo_data": true,
   "review_needed": true
 }
 ```
 
-The generated example is in `examples/forecast_response.json`. All forecast values remain advisory. The backend must continue to calculate stock balances, reorder quantities, prices, and purchase orders from authoritative records and business rules.
+The generated example is in `examples/forecast_response.json`. `fallback_reason` is `null` when a regression model is selected and contains a status such as `incomplete_history` when the mean fallback is used. All forecast values remain advisory. The backend must continue to calculate stock balances, reorder quantities, prices, and purchase orders from authoritative records and business rules.
 
 ## Confirm with Bharath
 

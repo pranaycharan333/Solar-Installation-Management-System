@@ -180,8 +180,10 @@ def forecast(history: pd.DataFrame, horizon_months: int = 3, minimum_rows: int =
         row = group.iloc[-1]
         if report["status"] != "evaluated" or len(group) < minimum_rows:
             model_name = "training_mean"
+            fallback_reason = report["status"] if report["status"] != "evaluated" else "insufficient_history"
         else:
             model_name = report["selected_model"]
+            fallback_reason = None
         origin = group["usage_month"].iloc[0]
         x_train = _features(group["usage_month"].dt.strftime("%Y-%m"), origin)
         if model_name == "training_mean":
@@ -205,6 +207,7 @@ def forecast(history: pd.DataFrame, horizon_months: int = 3, minimum_rows: int =
                 "unit": str(row["unit"]),
                 "model": model_name,
                 "model_version": "1.0.0",
+                "fallback_reason": fallback_reason,
                 "demo_data": bool(group["is_synthetic"].astype(str).str.lower().eq("true").all()),
                 "review_needed": True,
             })

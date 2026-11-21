@@ -6,6 +6,7 @@
     "unit": "meter",
     "model": "linear_regression",
     "model_version": "1.0.0",
+    "fallback_reason": null,
     "demo_data": true,
     "review_needed": true
   },
@@ -16,6 +17,7 @@
     "unit": "meter",
     "model": "linear_regression",
     "model_version": "1.0.0",
+    "fallback_reason": null,
     "demo_data": true,
     "review_needed": true
   },
@@ -26,6 +28,7 @@
     "unit": "meter",
     "model": "linear_regression",
     "model_version": "1.0.0",
+    "fallback_reason": null,
     "demo_data": true,
     "review_needed": true
   },
@@ -36,6 +39,7 @@
     "unit": "piece",
     "model": "linear_regression",
     "model_version": "1.0.0",
+    "fallback_reason": null,
     "demo_data": true,
     "review_needed": true
   },
@@ -46,6 +50,7 @@
     "unit": "piece",
     "model": "linear_regression",
     "model_version": "1.0.0",
+    "fallback_reason": null,
     "demo_data": true,
     "review_needed": true
   },
@@ -56,6 +61,7 @@
     "unit": "piece",
     "model": "linear_regression",
     "model_version": "1.0.0",
+    "fallback_reason": null,
     "demo_data": true,
     "review_needed": true
   },
@@ -66,6 +72,7 @@
     "unit": "piece",
     "model": "linear_regression",
     "model_version": "1.0.0",
+    "fallback_reason": null,
     "demo_data": true,
     "review_needed": true
   },
@@ -76,6 +83,7 @@
     "unit": "piece",
     "model": "linear_regression",
     "model_version": "1.0.0",
+    "fallback_reason": null,
     "demo_data": true,
     "review_needed": true
   },
@@ -86,6 +94,7 @@
     "unit": "piece",
     "model": "linear_regression",
     "model_version": "1.0.0",
+    "fallback_reason": null,
     "demo_data": true,
     "review_needed": true
   }
