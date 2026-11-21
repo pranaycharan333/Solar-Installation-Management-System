@@ -38,7 +38,7 @@ python -m ml.demand_forecast.demo
 
 The demo prints validation and holdout scores followed by three months of advisory forecasts. The sample history is synthetic and clearly marked as such. The module forecasts demand only; the backend must calculate stock, reorder quantities, prices, and purchase orders from authoritative records.
 
-Verify the forecast rules from the repository root with `python -m unittest discover -s ml/demand_forecast/tests -v`.
+Verify the forecast rules from the repository root with `python -m unittest discover -s ml/demand_forecast/tests -v`. The same checks and demo run automatically in GitHub Actions when forecast files change.
 
 See `ml/demand_forecast/README.md` for the input format and model details, and `ml/demand_forecast/INTEGRATION.md` for the proposed fields and decisions awaiting backend agreement.
 
