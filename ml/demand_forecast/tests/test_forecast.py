@@ -26,6 +26,14 @@ class ForecastBehaviorTests(unittest.TestCase):
             self.assertIn("fallback_reason", row)
             self.assertGreaterEqual(row["predicted_quantity"], 0)
 
+    def test_horizon_must_be_a_positive_integer(self):
+        material_id = self.records[0]["material_id"]
+        material_rows = [row for row in self.records if row["material_id"] == material_id]
+        for horizon in (0, -1, 1.5, True):
+            with self.subTest(horizon=horizon):
+                with self.assertRaisesRegex(ValueError, "positive integer"):
+                    forecast_records(material_rows, horizon_months=horizon)
+
     def test_mixed_synthetic_history_stays_labeled_as_demo_data(self):
         material_id = self.records[0]["material_id"]
         material_rows = [dict(row) for row in self.records if row["material_id"] == material_id]

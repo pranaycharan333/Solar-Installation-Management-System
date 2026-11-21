@@ -170,8 +170,8 @@ def evaluate(
 
 def forecast(history: pd.DataFrame, horizon_months: int = 3, minimum_rows: int = 24, holdout_months: int = 6, validation_months: int = 6) -> list[dict]:
     """Return advisory forecasts using validation-selected models or the mean fallback."""
-    if horizon_months < 1:
-        raise ValueError("horizon_months must be at least 1")
+    if isinstance(horizon_months, bool) or not isinstance(horizon_months, int) or horizon_months < 1:
+        raise ValueError("horizon_months must be a positive integer")
     reports = {r["material_id"]: r for r in evaluate(history, minimum_rows, holdout_months, validation_months)}
     results = []
     for material_id, group in history.groupby("material_id", sort=True):

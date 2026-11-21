@@ -39,7 +39,7 @@ These checks verify the demo request, chronological split, fallback behavior, an
 
 ## Current input fields
 
-`usage_month` (YYYY-MM), `material_id`, `material_name`, `quantity_used`, `unit`, and `is_synthetic`. This prototype assumes one row per material per month, with monthly quantities already aggregated. It forecasts three months by default. IDs are read as text to preserve leading zeroes. Blank values, negative or non-finite quantities, invalid synthetic flags, duplicate material-month rows, and inconsistent units are rejected with an explanation. A gap between recorded months is reported as incomplete history and uses the mean fallback; the module does not assume a missing row means zero usage.
+`usage_month` (YYYY-MM), `material_id`, `material_name`, `quantity_used`, `unit`, and `is_synthetic`. This prototype assumes one row per material per month, with monthly quantities already aggregated. It forecasts three months by default and accepts only a positive integer forecast horizon. IDs are read as text to preserve leading zeroes. Blank values, negative or non-finite quantities, invalid synthetic flags, duplicate material-month rows, and inconsistent units are rejected with an explanation. A gap between recorded months is reported as incomplete history and uses the mean fallback; the module does not assume a missing row means zero usage.
 
 ## Import and example response
 
