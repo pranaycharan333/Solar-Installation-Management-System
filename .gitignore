@@ -8,3 +8,10 @@ venv/
 .env
 .env.*
 !.env.example
+
+# Solar photo inspection data and downloaded model weights stay local.
+ml/photo_inspection/datasets/
+ml/photo_inspection/.venv/
+ml/photo_inspection/**/*.pt
+ml/photo_inspection/**/*.pth
+ml/photo_inspection/*.pt
