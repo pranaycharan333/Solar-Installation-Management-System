@@ -103,6 +103,17 @@ def evaluate(
     reports = []
     for material_id, group in history.groupby("material_id", sort=True):
         group = group.sort_values("usage_month").reset_index(drop=True)
+        observed_months = group["usage_month"].dt.to_period("M")
+        expected_months = pd.period_range(observed_months.min(), observed_months.max(), freq="M")
+        missing_months = [str(month) for month in expected_months.difference(observed_months)]
+        if missing_months:
+            reports.append({
+                "material_id": str(material_id),
+                "status": "incomplete_history",
+                "rows": len(group),
+                "missing_months": missing_months,
+            })
+            continue
         if len(group) < minimum_rows:
             reports.append({"material_id": material_id, "status": "insufficient_history", "rows": len(group), "minimum_rows": minimum_rows})
             continue

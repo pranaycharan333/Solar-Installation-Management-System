@@ -53,7 +53,7 @@ The generated example is in `examples/forecast_response.json`. All forecast valu
 
 1. Is monthly actual usage the right target, and what database events count as material used?
 2. Which inventory identifier and canonical unit should the model receive for each material?
-3. How should a missing month be represented: explicit zero usage, or incomplete data that should be excluded?
+3. Missing months currently mark that material history incomplete and trigger the mean fallback. Should a true zero-usage month arrive as an explicit zero row?
 4. What history window and forecast horizon should the backend request?
 5. Does the backend want to call `forecast_records()` with JSON-style records, or construct a DataFrame directly? The adapter exists, while its field names remain provisional.
 6. What response envelope, error shape, and model-version format should the endpoint use?
