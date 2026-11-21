@@ -91,6 +91,11 @@ def _nonnegative_metrics(actual: np.ndarray, predicted: np.ndarray) -> dict:
     }
 
 
+def _require_positive_integer(value: int, name: str) -> None:
+    if isinstance(value, bool) or not isinstance(value, int) or value < 1:
+        raise ValueError(f"{name} must be a positive integer")
+
+
 def evaluate(
     history: pd.DataFrame,
     minimum_rows: int = 24,
@@ -98,6 +103,9 @@ def evaluate(
     validation_months: int = 6,
 ) -> list[dict]:
     """Select models on a validation window and report separate future holdout metrics."""
+    _require_positive_integer(minimum_rows, "minimum_rows")
+    _require_positive_integer(holdout_months, "holdout_months")
+    _require_positive_integer(validation_months, "validation_months")
     if minimum_rows <= holdout_months + validation_months:
         raise ValueError("minimum_rows must leave at least one training row")
     reports = []
@@ -170,8 +178,7 @@ def evaluate(
 
 def forecast(history: pd.DataFrame, horizon_months: int = 3, minimum_rows: int = 24, holdout_months: int = 6, validation_months: int = 6) -> list[dict]:
     """Return advisory forecasts using validation-selected models or the mean fallback."""
-    if isinstance(horizon_months, bool) or not isinstance(horizon_months, int) or horizon_months < 1:
-        raise ValueError("horizon_months must be a positive integer")
+    _require_positive_integer(horizon_months, "horizon_months")
     reports = {r["material_id"]: r for r in evaluate(history, minimum_rows, holdout_months, validation_months)}
     results = []
     for material_id, group in history.groupby("material_id", sort=True):

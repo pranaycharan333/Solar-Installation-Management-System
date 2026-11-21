@@ -34,6 +34,25 @@ class ForecastBehaviorTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "positive integer"):
                     forecast_records(material_rows, horizon_months=horizon)
 
+    def test_evaluation_windows_must_be_positive_integers(self):
+        history = load_history(REPOSITORY_ROOT / "ml" / "demand_forecast" / "sample_history.csv")
+        invalid_settings = (
+            ("minimum_rows", 0),
+            ("minimum_rows", True),
+            ("holdout_months", 0),
+            ("holdout_months", 1.5),
+            ("validation_months", -1),
+        )
+        for setting, value in invalid_settings:
+            with self.subTest(setting=setting, value=value):
+                with self.assertRaisesRegex(ValueError, "positive integer"):
+                    evaluate(history, **{setting: value})
+
+    def test_minimum_history_leaves_training_data_after_both_windows(self):
+        history = load_history(REPOSITORY_ROOT / "ml" / "demand_forecast" / "sample_history.csv")
+        with self.assertRaisesRegex(ValueError, "leave at least one training row"):
+            evaluate(history, minimum_rows=12, validation_months=6, holdout_months=6)
+
     def test_mixed_synthetic_history_stays_labeled_as_demo_data(self):
         material_id = self.records[0]["material_id"]
         material_rows = [dict(row) for row in self.records if row["material_id"] == material_id]
