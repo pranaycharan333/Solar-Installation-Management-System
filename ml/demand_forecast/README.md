@@ -5,8 +5,9 @@ This is Chandra's first forecasting prototype. It uses **synthetic monthly demo 
 ## Files and why they exist
 
 - `sample_history.csv` is a small, reproducible example of monthly usage for panels, inverters, and cable. Keeping data outside the Python code makes it easier to replace demo values with an approved export later.
-- `forecast.py` loads and validates that input, compares a training-mean baseline with Linear Regression and Random Forest using a chronological holdout, and produces advisory predictions. We compare the simple baseline because a more complex model should earn its place by performing better on later dates.
+- `forecast.py` loads and validates that input, compares a training-mean baseline with Linear Regression and Random Forest using chronological validation and holdout windows, and produces advisory predictions. We compare the simple baseline because a more complex model should earn its place by performing better on later dates.
 - `make_demo_data.py` regenerates the CSV deterministically. It makes the invented nature of the data visible and avoids hand-editing 108 rows.
+- `demo.py` prints a compact explanation of the validation scores, separate holdout scores, selected model, and advisory forecasts for an evaluator.
 - `requirements.txt` lists only the Python libraries this prototype imports, so another machine can reproduce the environment without installing unrelated packages.
 - `__init__.py` provides a stable import point for the backend adapter, instead of making it import functions from an implementation file directly.
 - `examples/forecast_request.json` shows a provisional JSON-style input; its rows are synthetic.
@@ -21,6 +22,7 @@ From this folder:
 ```powershell
 python -m pip install -r requirements.txt
 python make_demo_data.py
+python demo.py
 python forecast.py
 ```
 
