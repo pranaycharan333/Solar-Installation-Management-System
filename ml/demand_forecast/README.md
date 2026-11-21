@@ -9,6 +9,7 @@ This is Chandra's first forecasting prototype. It uses **synthetic monthly demo 
 - `make_demo_data.py` regenerates the CSV deterministically. It makes the invented nature of the data visible and avoids hand-editing 108 rows.
 - `demo.py` prints a compact explanation of the validation scores, separate holdout scores, selected model, and advisory forecasts for an evaluator.
 - `requirements.txt` lists only the Python libraries this prototype imports, so another machine can reproduce the environment without installing unrelated packages.
+- `tests/test_forecast.py` checks the key data, validation-split, fallback, and output rules with Python built-in `unittest`.
 - `__init__.py` provides a stable import point for the backend adapter, instead of making it import functions from an implementation file directly.
 - `examples/forecast_request.json` shows a provisional JSON-style input; its rows are synthetic.
 - `examples/forecast_response.json` is an example response generated from the synthetic history. It lets teammates review the shape before the API field names are finalized.
@@ -25,6 +26,16 @@ python make_demo_data.py
 python demo.py
 python forecast.py
 ```
+
+## Verify
+
+From the repository root, run the focused behavior checks with:
+
+```powershell
+python -m unittest discover -s ml/demand_forecast/tests -v
+```
+
+These checks verify the demo request, chronological split, fallback behavior, and invalid input handling. They do not prove real-world forecast accuracy.
 
 ## Current input fields
 

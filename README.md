@@ -1,4 +1,4 @@
-﻿# SolarOps Intelligence
+# SolarOps Intelligence
 
 SolarOps Intelligence is a solar installation and service management project for SunPower Solutions. The repository currently contains a frontend demonstration and Chandra's material-demand forecasting prototype.
 
@@ -37,6 +37,8 @@ python -m ml.demand_forecast.demo
 ```
 
 The demo prints validation and holdout scores followed by three months of advisory forecasts. The sample history is synthetic and clearly marked as such. The module forecasts demand only; the backend must calculate stock, reorder quantities, prices, and purchase orders from authoritative records.
+
+Verify the forecast rules from the repository root with `python -m unittest discover -s ml/demand_forecast/tests -v`.
 
 See `ml/demand_forecast/README.md` for the input format and model details, and `ml/demand_forecast/INTEGRATION.md` for the proposed fields and decisions awaiting backend agreement.
 
