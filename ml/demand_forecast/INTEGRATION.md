@@ -1,4 +1,4 @@
-﻿# Forecast backend handoff
+# Forecast backend handoff
 
 This note describes Chandra's current model interface for review. The names and aggregation choices below are **proposals**, not an agreed API contract. Bharath should confirm them against the database schema and shared API contract before integration.
 
@@ -22,10 +22,12 @@ The prototype currently treats `quantity_used` as actual usage, not the planned 
 From the repository root, the current callable entry points are:
 
 ```python
-from ml.demand_forecast import evaluate, forecast
+from ml.demand_forecast import evaluate, forecast, forecast_records
 
 metrics = evaluate(history_dataframe)
 results = forecast(history_dataframe, horizon_months=3)
+# Or pass JSON-style records from a backend request:
+results = forecast_records(request["history"], horizon_months=3)
 ```
 
 `history_dataframe` must use the fields above and contain parsed monthly usage rows. `forecast()` returns one result per material and forecast month. It selects the candidate with the lowest MAE on the latest six chronological observations; with fewer than 18 rows for a material, it falls back to the training mean. This choice is a prototype rule, not yet a production model-selection policy.
@@ -53,7 +55,7 @@ The generated example is in `examples/forecast_response.json`. All forecast valu
 2. Which inventory identifier and canonical unit should the model receive for each material?
 3. How should a missing month be represented: explicit zero usage, or incomplete data that should be excluded?
 4. What history window and forecast horizon should the backend request?
-5. Should the backend pass a pandas DataFrame, or should Chandra add a JSON-record adapter after the request fields are agreed?
+5. Does the backend want to call `forecast_records()` with JSON-style records, or construct a DataFrame directly? The adapter exists, while its field names remain provisional.
 6. What response envelope, error shape, and model-version format should the endpoint use?
 
 Until those points are agreed, keep the sample data clearly marked synthetic and treat the response fields as provisional.

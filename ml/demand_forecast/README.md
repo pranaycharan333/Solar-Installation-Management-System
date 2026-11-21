@@ -9,6 +9,7 @@ This is Chandra's first forecasting prototype. It uses **synthetic monthly demo 
 - `make_demo_data.py` regenerates the CSV deterministically. It makes the invented nature of the data visible and avoids hand-editing 108 rows.
 - `requirements.txt` lists only the Python libraries this prototype imports, so another machine can reproduce the environment without installing unrelated packages.
 - `__init__.py` provides a stable import point for the backend adapter, instead of making it import functions from an implementation file directly.
+- `examples/forecast_request.json` shows a provisional JSON-style input; its rows are synthetic.
 - `examples/forecast_response.json` is an example response generated from the synthetic history. It lets teammates review the shape before the API field names are finalized.
 - `examples/evaluation_report.json` records the baseline and model holdout metrics for the same demo data, so the comparison is easy to review without running the script.
 - `INTEGRATION.md` is the proposed handoff for Bharath; it separates current assumptions from decisions that still need agreement.
@@ -29,7 +30,7 @@ python forecast.py
 
 ## Import and example response
 
-From the repository root, import the public functions with `from ml.demand_forecast import evaluate, forecast, load_history`. Then call `history = load_history()`, `metrics = evaluate(history)`, and `results = forecast(history)`. The example response is intentionally generated from demo data and is provisional until Bharath confirms the contract.
+From the repository root, import the public functions with `from ml.demand_forecast import evaluate, forecast, forecast_records, load_history`. Then call `history = load_history()`, `metrics = evaluate(history)`, and `results = forecast(history)`. A backend handling JSON records can pass `request["history"]` to `forecast_records(records, horizon_months=3)`; this adapter uses the same validation as CSV input. The example response is intentionally generated from demo data and is provisional until Bharath confirms the contract.
 
 ## Output fields
 

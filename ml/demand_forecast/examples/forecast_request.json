@@ -1,0 +1,437 @@
+{
+  "horizon_months": 3,
+  "history": [
+    {
+      "usage_month": "2025-05",
+      "material_id": "MAT-PANEL-001",
+      "material_name": "Solar panel",
+      "quantity_used": 110,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-06",
+      "material_id": "MAT-PANEL-001",
+      "material_name": "Solar panel",
+      "quantity_used": 112,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-07",
+      "material_id": "MAT-PANEL-001",
+      "material_name": "Solar panel",
+      "quantity_used": 114,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-08",
+      "material_id": "MAT-PANEL-001",
+      "material_name": "Solar panel",
+      "quantity_used": 116,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-09",
+      "material_id": "MAT-PANEL-001",
+      "material_name": "Solar panel",
+      "quantity_used": 118,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-10",
+      "material_id": "MAT-PANEL-001",
+      "material_name": "Solar panel",
+      "quantity_used": 129,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-11",
+      "material_id": "MAT-PANEL-001",
+      "material_name": "Solar panel",
+      "quantity_used": 131,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-12",
+      "material_id": "MAT-PANEL-001",
+      "material_name": "Solar panel",
+      "quantity_used": 123,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-01",
+      "material_id": "MAT-PANEL-001",
+      "material_name": "Solar panel",
+      "quantity_used": 125,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-02",
+      "material_id": "MAT-PANEL-001",
+      "material_name": "Solar panel",
+      "quantity_used": 127,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-03",
+      "material_id": "MAT-PANEL-001",
+      "material_name": "Solar panel",
+      "quantity_used": 138,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-04",
+      "material_id": "MAT-PANEL-001",
+      "material_name": "Solar panel",
+      "quantity_used": 140,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-05",
+      "material_id": "MAT-PANEL-001",
+      "material_name": "Solar panel",
+      "quantity_used": 132,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-06",
+      "material_id": "MAT-PANEL-001",
+      "material_name": "Solar panel",
+      "quantity_used": 134,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-07",
+      "material_id": "MAT-PANEL-001",
+      "material_name": "Solar panel",
+      "quantity_used": 136,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-08",
+      "material_id": "MAT-PANEL-001",
+      "material_name": "Solar panel",
+      "quantity_used": 137,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-09",
+      "material_id": "MAT-PANEL-001",
+      "material_name": "Solar panel",
+      "quantity_used": 139,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-10",
+      "material_id": "MAT-PANEL-001",
+      "material_name": "Solar panel",
+      "quantity_used": 151,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-05",
+      "material_id": "MAT-INV-001",
+      "material_name": "Inverter",
+      "quantity_used": 26,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-06",
+      "material_id": "MAT-INV-001",
+      "material_name": "Inverter",
+      "quantity_used": 27,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-07",
+      "material_id": "MAT-INV-001",
+      "material_name": "Inverter",
+      "quantity_used": 27,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-08",
+      "material_id": "MAT-INV-001",
+      "material_name": "Inverter",
+      "quantity_used": 27,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-09",
+      "material_id": "MAT-INV-001",
+      "material_name": "Inverter",
+      "quantity_used": 28,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-10",
+      "material_id": "MAT-INV-001",
+      "material_name": "Inverter",
+      "quantity_used": 31,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-11",
+      "material_id": "MAT-INV-001",
+      "material_name": "Inverter",
+      "quantity_used": 32,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-12",
+      "material_id": "MAT-INV-001",
+      "material_name": "Inverter",
+      "quantity_used": 29,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-01",
+      "material_id": "MAT-INV-001",
+      "material_name": "Inverter",
+      "quantity_used": 30,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-02",
+      "material_id": "MAT-INV-001",
+      "material_name": "Inverter",
+      "quantity_used": 30,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-03",
+      "material_id": "MAT-INV-001",
+      "material_name": "Inverter",
+      "quantity_used": 34,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-04",
+      "material_id": "MAT-INV-001",
+      "material_name": "Inverter",
+      "quantity_used": 34,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-05",
+      "material_id": "MAT-INV-001",
+      "material_name": "Inverter",
+      "quantity_used": 32,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-06",
+      "material_id": "MAT-INV-001",
+      "material_name": "Inverter",
+      "quantity_used": 32,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-07",
+      "material_id": "MAT-INV-001",
+      "material_name": "Inverter",
+      "quantity_used": 32,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-08",
+      "material_id": "MAT-INV-001",
+      "material_name": "Inverter",
+      "quantity_used": 33,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-09",
+      "material_id": "MAT-INV-001",
+      "material_name": "Inverter",
+      "quantity_used": 33,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-10",
+      "material_id": "MAT-INV-001",
+      "material_name": "Inverter",
+      "quantity_used": 37,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-05",
+      "material_id": "MAT-CABLE-001",
+      "material_name": "DC cable",
+      "quantity_used": 736,
+      "unit": "meter",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-06",
+      "material_id": "MAT-CABLE-001",
+      "material_name": "DC cable",
+      "quantity_used": 748,
+      "unit": "meter",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-07",
+      "material_id": "MAT-CABLE-001",
+      "material_name": "DC cable",
+      "quantity_used": 760,
+      "unit": "meter",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-08",
+      "material_id": "MAT-CABLE-001",
+      "material_name": "DC cable",
+      "quantity_used": 772,
+      "unit": "meter",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-09",
+      "material_id": "MAT-CABLE-001",
+      "material_name": "DC cable",
+      "quantity_used": 784,
+      "unit": "meter",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-10",
+      "material_id": "MAT-CABLE-001",
+      "material_name": "DC cable",
+      "quantity_used": 803,
+      "unit": "meter",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-11",
+      "material_id": "MAT-CABLE-001",
+      "material_name": "DC cable",
+      "quantity_used": 815,
+      "unit": "meter",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-12",
+      "material_id": "MAT-CABLE-001",
+      "material_name": "DC cable",
+      "quantity_used": 820,
+      "unit": "meter",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-01",
+      "material_id": "MAT-CABLE-001",
+      "material_name": "DC cable",
+      "quantity_used": 832,
+      "unit": "meter",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-02",
+      "material_id": "MAT-CABLE-001",
+      "material_name": "DC cable",
+      "quantity_used": 844,
+      "unit": "meter",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-03",
+      "material_id": "MAT-CABLE-001",
+      "material_name": "DC cable",
+      "quantity_used": 863,
+      "unit": "meter",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-04",
+      "material_id": "MAT-CABLE-001",
+      "material_name": "DC cable",
+      "quantity_used": 875,
+      "unit": "meter",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-05",
+      "material_id": "MAT-CABLE-001",
+      "material_name": "DC cable",
+      "quantity_used": 880,
+      "unit": "meter",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-06",
+      "material_id": "MAT-CABLE-001",
+      "material_name": "DC cable",
+      "quantity_used": 892,
+      "unit": "meter",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-07",
+      "material_id": "MAT-CABLE-001",
+      "material_name": "DC cable",
+      "quantity_used": 904,
+      "unit": "meter",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-08",
+      "material_id": "MAT-CABLE-001",
+      "material_name": "DC cable",
+      "quantity_used": 916,
+      "unit": "meter",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-09",
+      "material_id": "MAT-CABLE-001",
+      "material_name": "DC cable",
+      "quantity_used": 928,
+      "unit": "meter",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2026-10",
+      "material_id": "MAT-CABLE-001",
+      "material_name": "DC cable",
+      "quantity_used": 947,
+      "unit": "meter",
+      "is_synthetic": true
+    }
+  ]
+}

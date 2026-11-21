@@ -27,9 +27,9 @@ def _features(months: pd.Series, origin: pd.Timestamp) -> np.ndarray:
     return np.column_stack([elapsed.to_numpy(), np.sin(angle), np.cos(angle)])
 
 
-def load_history(path: Path = DATA_PATH) -> pd.DataFrame:
-    """Load and validate monthly material usage rows."""
-    frame = pd.read_csv(path, dtype={"material_id": "string"})
+def _validate_history(frame: pd.DataFrame) -> pd.DataFrame:
+    """Validate and normalize monthly material usage rows."""
+    frame = frame.copy()
     missing = REQUIRED_COLUMNS - set(frame.columns)
     if missing:
         raise ValueError(f"History is missing required columns: {', '.join(sorted(missing))}")
@@ -65,6 +65,12 @@ def load_history(path: Path = DATA_PATH) -> pd.DataFrame:
         )
 
     return frame.sort_values(["material_id", "usage_month"]).reset_index(drop=True)
+
+
+def load_history(path: Path = DATA_PATH) -> pd.DataFrame:
+    """Load and validate monthly usage from a CSV file."""
+    frame = pd.read_csv(path, dtype={"material_id": "string"})
+    return _validate_history(frame)
 
 
 
@@ -146,6 +152,18 @@ def forecast(history: pd.DataFrame, horizon_months: int = 3, minimum_rows: int =
                 "review_needed": True,
             })
     return results
+
+
+def forecast_records(records: list[dict], horizon_months: int = 3) -> list[dict]:
+    """Forecast from JSON-style history records using the provisional field names."""
+    if not records:
+        raise ValueError("records must contain at least one usage row")
+    if any(not isinstance(record, dict) for record in records):
+        raise ValueError("each history record must be a JSON object")
+    if any(not isinstance(record.get("material_id"), str) for record in records):
+        raise ValueError("material_id must be sent as text to preserve leading zeroes")
+    history = _validate_history(pd.DataFrame.from_records(records))
+    return forecast(history, horizon_months=horizon_months)
 
 
 def main() -> None:
