@@ -82,6 +82,15 @@ def _models():
     }
 
 
+def _nonnegative_metrics(actual: np.ndarray, predicted: np.ndarray) -> dict:
+    """Score feasible quantities using the same zero floor as forecast output."""
+    feasible = np.maximum(0.0, np.asarray(predicted, dtype=float))
+    return {
+        "mae": round(float(mean_absolute_error(actual, feasible)), 3),
+        "rmse": round(float(np.sqrt(mean_squared_error(actual, feasible))), 3),
+    }
+
+
 def evaluate(
     history: pd.DataFrame,
     minimum_rows: int = 24,
@@ -117,10 +126,7 @@ def evaluate(
         validation_mean = float(y_train.mean())
         for name, model in _models().items():
             predicted = np.full(len(validation), validation_mean) if model is None else model.fit(x_train, y_train).predict(x_validation)
-            validation_metrics[name] = {
-                "mae": round(float(mean_absolute_error(y_validation, predicted)), 3),
-                "rmse": round(float(np.sqrt(mean_squared_error(y_validation, predicted))), 3),
-            }
+            validation_metrics[name] = _nonnegative_metrics(y_validation, predicted)
             validation_mae[name] = validation_metrics[name]["mae"]
         selected_model = min(validation_mae, key=validation_mae.get)
 
@@ -133,10 +139,7 @@ def evaluate(
         holdout_mean = float(y_fit.mean())
         for name, model in _models().items():
             predicted = np.full(len(holdout), holdout_mean) if model is None else model.fit(x_fit, y_fit).predict(x_holdout)
-            holdout_metrics[name] = {
-                "mae": round(float(mean_absolute_error(y_holdout, predicted)), 3),
-                "rmse": round(float(np.sqrt(mean_squared_error(y_holdout, predicted))), 3),
-            }
+            holdout_metrics[name] = _nonnegative_metrics(y_holdout, predicted)
 
         reports.append({
             "material_id": str(material_id),
