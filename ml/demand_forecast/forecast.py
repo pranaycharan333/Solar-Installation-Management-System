@@ -1,0 +1,160 @@
+"""Small, advisory material-demand forecast prototype for SolarOps.
+
+The included history is synthetic. Results are a demo, not an inventory decision.
+"""
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+ROOT = Path(__file__).parent
+DATA_PATH = ROOT / "sample_history.csv"
+REQUIRED_COLUMNS = {"usage_month", "material_id", "material_name", "quantity_used", "unit", "is_synthetic"}
+
+
+def _features(months: pd.Series, origin: pd.Timestamp) -> np.ndarray:
+    dates = pd.to_datetime(months.astype(str) + "-01")
+    elapsed = (dates.dt.year - origin.year) * 12 + dates.dt.month - origin.month
+    angle = 2 * np.pi * (dates.dt.month - 1) / 12
+    return np.column_stack([elapsed.to_numpy(), np.sin(angle), np.cos(angle)])
+
+
+def load_history(path: Path = DATA_PATH) -> pd.DataFrame:
+    """Load and validate monthly material usage rows."""
+    frame = pd.read_csv(path, dtype={"material_id": "string"})
+    missing = REQUIRED_COLUMNS - set(frame.columns)
+    if missing:
+        raise ValueError(f"History is missing required columns: {', '.join(sorted(missing))}")
+
+    text_columns = ["usage_month", "material_id", "material_name", "unit", "is_synthetic"]
+    for column in text_columns:
+        frame[column] = frame[column].astype("string").str.strip()
+        if frame[column].isna().any() or frame[column].eq("").any():
+            raise ValueError(f"{column} cannot contain blank values")
+
+    frame["usage_month"] = pd.to_datetime(
+        frame["usage_month"] + "-01", format="%Y-%m-%d", errors="raise"
+    )
+    frame["quantity_used"] = pd.to_numeric(frame["quantity_used"], errors="raise")
+    quantities = frame["quantity_used"].to_numpy(dtype=float)
+    if not np.isfinite(quantities).all():
+        raise ValueError("quantity_used must contain finite numbers")
+    if (quantities < 0).any():
+        raise ValueError("quantity_used cannot be negative")
+
+    frame["is_synthetic"] = frame["is_synthetic"].str.lower()
+    invalid_flags = set(frame["is_synthetic"]) - {"true", "false"}
+    if invalid_flags:
+        raise ValueError("is_synthetic must be true or false")
+    if frame.duplicated(["usage_month", "material_id"]).any():
+        raise ValueError("Each material can have only one row per month in this prototype")
+    unit_counts = frame.groupby("material_id")["unit"].nunique()
+    inconsistent_units = unit_counts[unit_counts > 1].index.tolist()
+    if inconsistent_units:
+        raise ValueError(
+            "Each material must use one consistent unit; check: "
+            + ", ".join(inconsistent_units)
+        )
+
+    return frame.sort_values(["material_id", "usage_month"]).reset_index(drop=True)
+
+
+
+def _models():
+    return {
+        "training_mean": None,
+        "linear_regression": make_pipeline(StandardScaler(), LinearRegression()),
+        "random_forest": RandomForestRegressor(n_estimators=200, max_depth=3, random_state=42),
+    }
+
+
+def evaluate(history: pd.DataFrame, minimum_rows: int = 18, holdout_months: int = 6) -> list[dict]:
+    """Compare a mean baseline and two small models on the latest months."""
+    reports = []
+    for material_id, group in history.groupby("material_id", sort=True):
+        group = group.sort_values("usage_month").reset_index(drop=True)
+        if len(group) < minimum_rows:
+            reports.append({"material_id": material_id, "status": "insufficient_history", "rows": len(group)})
+            continue
+        split = max(1, len(group) - holdout_months)
+        train, test = group.iloc[:split], group.iloc[split:]
+        if test.empty:
+            reports.append({"material_id": material_id, "status": "no_holdout_rows", "rows": len(group)})
+            continue
+        origin = train["usage_month"].iloc[0]
+        x_train = _features(train["usage_month"].dt.strftime("%Y-%m"), origin)
+        x_test = _features(test["usage_month"].dt.strftime("%Y-%m"), origin)
+        y_train, y_test = train["quantity_used"].to_numpy(), test["quantity_used"].to_numpy()
+        metrics = {"training_mean": float(y_train.mean())}
+        for name, model in _models().items():
+            predicted = np.full(len(test), metrics["training_mean"]) if model is None else model.fit(x_train, y_train).predict(x_test)
+            metrics[name] = {
+                "mae": round(float(mean_absolute_error(y_test, predicted)), 3),
+                "rmse": round(float(np.sqrt(mean_squared_error(y_test, predicted))), 3),
+            }
+        reports.append({"material_id": material_id, "status": "evaluated", "train_rows": len(train), "holdout_rows": len(test), "holdout_start": test["usage_month"].iloc[0].strftime("%Y-%m"), "metrics": metrics})
+    return reports
+
+
+def forecast(history: pd.DataFrame, horizon_months: int = 3, minimum_rows: int = 18) -> list[dict]:
+    """Return advisory monthly forecasts using the lowest holdout-MAE model."""
+    if horizon_months < 1:
+        raise ValueError("horizon_months must be at least 1")
+    reports = {r["material_id"]: r for r in evaluate(history)}
+    results = []
+    for material_id, group in history.groupby("material_id", sort=True):
+        group = group.sort_values("usage_month").reset_index(drop=True)
+        report = reports[material_id]
+        row = group.iloc[-1]
+        if report["status"] != "evaluated" or len(group) < minimum_rows:
+            model_name = "training_mean"
+        else:
+            errors = {name: values["mae"] for name, values in report["metrics"].items() if isinstance(values, dict)}
+            model_name = min(errors, key=errors.get)
+        origin = group["usage_month"].iloc[0]
+        x_train = _features(group["usage_month"].dt.strftime("%Y-%m"), origin)
+        if model_name == "training_mean":
+            fitted = None
+            prediction = float(group["quantity_used"].mean())
+        else:
+            fitted = _models()[model_name]
+            fitted.fit(x_train, group["quantity_used"].to_numpy())
+            prediction = None
+        for step in range(1, horizon_months + 1):
+            target = row["usage_month"] + pd.DateOffset(months=step)
+            month = target.strftime("%Y-%m")
+            if fitted is not None:
+                value = float(fitted.predict(_features(pd.Series([month]), origin))[0])
+            else:
+                value = prediction
+            results.append({
+                "material_id": str(material_id),
+                "forecast_period": month,
+                "predicted_quantity": round(max(0.0, value), 2),
+                "unit": str(row["unit"]),
+                "model": model_name,
+                "model_version": "1.0.0",
+                "demo_data": bool(group["is_synthetic"].astype(str).str.lower().eq("true").all()),
+                "review_needed": True,
+            })
+    return results
+
+
+def main() -> None:
+    history = load_history()
+    print("TEMPORAL HOLDOUT METRICS (demo data; not real-world accuracy)")
+    print(json.dumps(evaluate(history), indent=2))
+    print("\nADVISORY FORECAST")
+    print(json.dumps(forecast(history), indent=2))
+
+
+if __name__ == "__main__":
+    main()

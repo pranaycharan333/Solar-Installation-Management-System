@@ -1,0 +1,109 @@
+usage_month,material_id,material_name,quantity_used,unit,is_synthetic
+2023-11,MAT-PANEL-001,Solar panel,88,piece,true
+2023-12,MAT-PANEL-001,Solar panel,80,piece,true
+2024-01,MAT-PANEL-001,Solar panel,82,piece,true
+2024-02,MAT-PANEL-001,Solar panel,83,piece,true
+2024-03,MAT-PANEL-001,Solar panel,95,piece,true
+2024-04,MAT-PANEL-001,Solar panel,97,piece,true
+2024-05,MAT-PANEL-001,Solar panel,89,piece,true
+2024-06,MAT-PANEL-001,Solar panel,91,piece,true
+2024-07,MAT-PANEL-001,Solar panel,92,piece,true
+2024-08,MAT-PANEL-001,Solar panel,94,piece,true
+2024-09,MAT-PANEL-001,Solar panel,96,piece,true
+2024-10,MAT-PANEL-001,Solar panel,108,piece,true
+2024-11,MAT-PANEL-001,Solar panel,110,piece,true
+2024-12,MAT-PANEL-001,Solar panel,101,piece,true
+2025-01,MAT-PANEL-001,Solar panel,103,piece,true
+2025-02,MAT-PANEL-001,Solar panel,105,piece,true
+2025-03,MAT-PANEL-001,Solar panel,117,piece,true
+2025-04,MAT-PANEL-001,Solar panel,119,piece,true
+2025-05,MAT-PANEL-001,Solar panel,110,piece,true
+2025-06,MAT-PANEL-001,Solar panel,112,piece,true
+2025-07,MAT-PANEL-001,Solar panel,114,piece,true
+2025-08,MAT-PANEL-001,Solar panel,116,piece,true
+2025-09,MAT-PANEL-001,Solar panel,118,piece,true
+2025-10,MAT-PANEL-001,Solar panel,129,piece,true
+2025-11,MAT-PANEL-001,Solar panel,131,piece,true
+2025-12,MAT-PANEL-001,Solar panel,123,piece,true
+2026-01,MAT-PANEL-001,Solar panel,125,piece,true
+2026-02,MAT-PANEL-001,Solar panel,127,piece,true
+2026-03,MAT-PANEL-001,Solar panel,138,piece,true
+2026-04,MAT-PANEL-001,Solar panel,140,piece,true
+2026-05,MAT-PANEL-001,Solar panel,132,piece,true
+2026-06,MAT-PANEL-001,Solar panel,134,piece,true
+2026-07,MAT-PANEL-001,Solar panel,136,piece,true
+2026-08,MAT-PANEL-001,Solar panel,137,piece,true
+2026-09,MAT-PANEL-001,Solar panel,139,piece,true
+2026-10,MAT-PANEL-001,Solar panel,151,piece,true
+2023-11,MAT-INV-001,Inverter,21,piece,true
+2023-12,MAT-INV-001,Inverter,18,piece,true
+2024-01,MAT-INV-001,Inverter,19,piece,true
+2024-02,MAT-INV-001,Inverter,19,piece,true
+2024-03,MAT-INV-001,Inverter,23,piece,true
+2024-04,MAT-INV-001,Inverter,23,piece,true
+2024-05,MAT-INV-001,Inverter,21,piece,true
+2024-06,MAT-INV-001,Inverter,21,piece,true
+2024-07,MAT-INV-001,Inverter,22,piece,true
+2024-08,MAT-INV-001,Inverter,22,piece,true
+2024-09,MAT-INV-001,Inverter,22,piece,true
+2024-10,MAT-INV-001,Inverter,26,piece,true
+2024-11,MAT-INV-001,Inverter,26,piece,true
+2024-12,MAT-INV-001,Inverter,24,piece,true
+2025-01,MAT-INV-001,Inverter,24,piece,true
+2025-02,MAT-INV-001,Inverter,25,piece,true
+2025-03,MAT-INV-001,Inverter,28,piece,true
+2025-04,MAT-INV-001,Inverter,29,piece,true
+2025-05,MAT-INV-001,Inverter,26,piece,true
+2025-06,MAT-INV-001,Inverter,27,piece,true
+2025-07,MAT-INV-001,Inverter,27,piece,true
+2025-08,MAT-INV-001,Inverter,27,piece,true
+2025-09,MAT-INV-001,Inverter,28,piece,true
+2025-10,MAT-INV-001,Inverter,31,piece,true
+2025-11,MAT-INV-001,Inverter,32,piece,true
+2025-12,MAT-INV-001,Inverter,29,piece,true
+2026-01,MAT-INV-001,Inverter,30,piece,true
+2026-02,MAT-INV-001,Inverter,30,piece,true
+2026-03,MAT-INV-001,Inverter,34,piece,true
+2026-04,MAT-INV-001,Inverter,34,piece,true
+2026-05,MAT-INV-001,Inverter,32,piece,true
+2026-06,MAT-INV-001,Inverter,32,piece,true
+2026-07,MAT-INV-001,Inverter,32,piece,true
+2026-08,MAT-INV-001,Inverter,33,piece,true
+2026-09,MAT-INV-001,Inverter,33,piece,true
+2026-10,MAT-INV-001,Inverter,37,piece,true
+2023-11,MAT-CABLE-001,DC cable,527,meter,true
+2023-12,MAT-CABLE-001,DC cable,532,meter,true
+2024-01,MAT-CABLE-001,DC cable,544,meter,true
+2024-02,MAT-CABLE-001,DC cable,556,meter,true
+2024-03,MAT-CABLE-001,DC cable,575,meter,true
+2024-04,MAT-CABLE-001,DC cable,587,meter,true
+2024-05,MAT-CABLE-001,DC cable,592,meter,true
+2024-06,MAT-CABLE-001,DC cable,604,meter,true
+2024-07,MAT-CABLE-001,DC cable,616,meter,true
+2024-08,MAT-CABLE-001,DC cable,628,meter,true
+2024-09,MAT-CABLE-001,DC cable,640,meter,true
+2024-10,MAT-CABLE-001,DC cable,659,meter,true
+2024-11,MAT-CABLE-001,DC cable,671,meter,true
+2024-12,MAT-CABLE-001,DC cable,676,meter,true
+2025-01,MAT-CABLE-001,DC cable,688,meter,true
+2025-02,MAT-CABLE-001,DC cable,700,meter,true
+2025-03,MAT-CABLE-001,DC cable,719,meter,true
+2025-04,MAT-CABLE-001,DC cable,731,meter,true
+2025-05,MAT-CABLE-001,DC cable,736,meter,true
+2025-06,MAT-CABLE-001,DC cable,748,meter,true
+2025-07,MAT-CABLE-001,DC cable,760,meter,true
+2025-08,MAT-CABLE-001,DC cable,772,meter,true
+2025-09,MAT-CABLE-001,DC cable,784,meter,true
+2025-10,MAT-CABLE-001,DC cable,803,meter,true
+2025-11,MAT-CABLE-001,DC cable,815,meter,true
+2025-12,MAT-CABLE-001,DC cable,820,meter,true
+2026-01,MAT-CABLE-001,DC cable,832,meter,true
+2026-02,MAT-CABLE-001,DC cable,844,meter,true
+2026-03,MAT-CABLE-001,DC cable,863,meter,true
+2026-04,MAT-CABLE-001,DC cable,875,meter,true
+2026-05,MAT-CABLE-001,DC cable,880,meter,true
+2026-06,MAT-CABLE-001,DC cable,892,meter,true
+2026-07,MAT-CABLE-001,DC cable,904,meter,true
+2026-08,MAT-CABLE-001,DC cable,916,meter,true
+2026-09,MAT-CABLE-001,DC cable,928,meter,true
+2026-10,MAT-CABLE-001,DC cable,947,meter,true

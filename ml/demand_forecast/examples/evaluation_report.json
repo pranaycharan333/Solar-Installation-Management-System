@@ -1,0 +1,69 @@
+{
+  "demo_data": true,
+  "note": "Synthetic demo only; metrics are not real-world accuracy.",
+  "results": [
+    {
+      "material_id": "MAT-CABLE-001",
+      "status": "evaluated",
+      "train_rows": 30,
+      "holdout_rows": 6,
+      "holdout_start": "2026-05",
+      "metrics": {
+        "training_mean": {
+          "mae": 214.6,
+          "rmse": 215.754
+        },
+        "linear_regression": {
+          "mae": 2.689,
+          "rmse": 2.783
+        },
+        "random_forest": {
+          "mae": 68.666,
+          "rmse": 73.469
+        }
+      }
+    },
+    {
+      "material_id": "MAT-INV-001",
+      "status": "evaluated",
+      "train_rows": 30,
+      "holdout_rows": 6,
+      "holdout_start": "2026-05",
+      "metrics": {
+        "training_mean": {
+          "mae": 7.567,
+          "rmse": 7.771
+        },
+        "linear_regression": {
+          "mae": 1.271,
+          "rmse": 1.345
+        },
+        "random_forest": {
+          "mae": 1.232,
+          "rmse": 1.868
+        }
+      }
+    },
+    {
+      "material_id": "MAT-PANEL-001",
+      "status": "evaluated",
+      "train_rows": 30,
+      "holdout_rows": 6,
+      "holdout_start": "2026-05",
+      "metrics": {
+        "training_mean": {
+          "mae": 30.4,
+          "rmse": 31.016
+        },
+        "linear_regression": {
+          "mae": 3.797,
+          "rmse": 3.949
+        },
+        "random_forest": {
+          "mae": 5.825,
+          "rmse": 7.88
+        }
+      }
+    }
+  ]
+}\n
