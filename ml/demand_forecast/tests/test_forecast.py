@@ -3,7 +3,9 @@ import json
 from pathlib import Path
 import unittest
 
-from ml.demand_forecast import evaluate, forecast_records, load_history
+import pandas as pd
+
+from ml.demand_forecast import evaluate, forecast, forecast_records, load_history
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
@@ -70,6 +72,20 @@ class ForecastBehaviorTests(unittest.TestCase):
         self.assertEqual(report["validation_start"], "2025-11")
         self.assertEqual(report["holdout_start"], "2026-05")
         self.assertEqual(report["holdout_rows"], 6)
+
+    def test_public_dataframe_entry_points_validate_parsed_history(self):
+        history = load_history(REPOSITORY_ROOT / "ml" / "demand_forecast" / "sample_history.csv")
+        self.assertEqual(evaluate(history)[0]["status"], "evaluated")
+        self.assertEqual(len(forecast(history)), 9)
+
+        invalid_history = history.copy()
+        invalid_history.loc[invalid_history.index[0], "quantity_used"] = -1
+        with self.assertRaisesRegex(ValueError, "cannot be negative"):
+            evaluate(invalid_history)
+
+        duplicate_history = pd.concat([history, history.iloc[[0]]], ignore_index=True)
+        with self.assertRaisesRegex(ValueError, "only one row per month"):
+            forecast(duplicate_history)
 
     def test_sparse_history_uses_mean_fallback(self):
         material_id = self.records[0]["material_id"]

@@ -34,15 +34,16 @@ def _validate_history(frame: pd.DataFrame) -> pd.DataFrame:
     if missing:
         raise ValueError(f"History is missing required columns: {', '.join(sorted(missing))}")
 
-    text_columns = ["usage_month", "material_id", "material_name", "unit", "is_synthetic"]
+    text_columns = ["material_id", "material_name", "unit", "is_synthetic"]
     for column in text_columns:
         frame[column] = frame[column].astype("string").str.strip()
         if frame[column].isna().any() or frame[column].eq("").any():
             raise ValueError(f"{column} cannot contain blank values")
 
-    frame["usage_month"] = pd.to_datetime(
-        frame["usage_month"] + "-01", format="%Y-%m-%d", errors="raise"
-    )
+    frame["usage_month"] = frame["usage_month"].astype("string").str.strip()
+    if frame["usage_month"].isna().any() or frame["usage_month"].eq("").any():
+        raise ValueError("usage_month cannot contain blank values")
+    frame["usage_month"] = pd.to_datetime(frame["usage_month"], errors="raise").dt.to_period("M").dt.to_timestamp()
     frame["quantity_used"] = pd.to_numeric(frame["quantity_used"], errors="raise")
     quantities = frame["quantity_used"].to_numpy(dtype=float)
     if not np.isfinite(quantities).all():
@@ -103,6 +104,7 @@ def evaluate(
     validation_months: int = 6,
 ) -> list[dict]:
     """Select models on a validation window and report separate future holdout metrics."""
+    history = _validate_history(history)
     _require_positive_integer(minimum_rows, "minimum_rows")
     _require_positive_integer(holdout_months, "holdout_months")
     _require_positive_integer(validation_months, "validation_months")
@@ -178,6 +180,7 @@ def evaluate(
 
 def forecast(history: pd.DataFrame, horizon_months: int = 3, minimum_rows: int = 24, holdout_months: int = 6, validation_months: int = 6) -> list[dict]:
     """Return advisory forecasts using validation-selected models or the mean fallback."""
+    history = _validate_history(history)
     _require_positive_integer(horizon_months, "horizon_months")
     reports = {r["material_id"]: r for r in evaluate(history, minimum_rows, holdout_months, validation_months)}
     results = []
