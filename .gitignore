@@ -8,3 +8,17 @@ venv/
 .env
 .env.*
 !.env.example
+
+# Node.js dependencies
+node_modules/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Python cache and virtual environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
