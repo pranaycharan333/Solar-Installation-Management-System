@@ -2,7 +2,7 @@
   {
     "material_id": "MAT-CABLE-001",
     "forecast_period": "2026-11",
-    "predicted_quantity": 956.29,
+    "predicted_quantity": 955.25,
     "unit": "meter",
     "model": "linear_regression",
     "model_version": "1.0.0",
@@ -12,7 +12,7 @@
   {
     "material_id": "MAT-CABLE-001",
     "forecast_period": "2026-12",
-    "predicted_quantity": 968.83,
+    "predicted_quantity": 967.75,
     "unit": "meter",
     "model": "linear_regression",
     "model_version": "1.0.0",
@@ -22,7 +22,7 @@
   {
     "material_id": "MAT-CABLE-001",
     "forecast_period": "2027-01",
-    "predicted_quantity": 980.9,
+    "predicted_quantity": 979.96,
     "unit": "meter",
     "model": "linear_regression",
     "model_version": "1.0.0",
@@ -32,9 +32,9 @@
   {
     "material_id": "MAT-INV-001",
     "forecast_period": "2026-11",
-    "predicted_quantity": 34.81,
+    "predicted_quantity": 35.59,
     "unit": "piece",
-    "model": "random_forest",
+    "model": "linear_regression",
     "model_version": "1.0.0",
     "demo_data": true,
     "review_needed": true
@@ -42,9 +42,9 @@
   {
     "material_id": "MAT-INV-001",
     "forecast_period": "2026-12",
-    "predicted_quantity": 34.0,
+    "predicted_quantity": 36.33,
     "unit": "piece",
-    "model": "random_forest",
+    "model": "linear_regression",
     "model_version": "1.0.0",
     "demo_data": true,
     "review_needed": true
@@ -52,9 +52,9 @@
   {
     "material_id": "MAT-INV-001",
     "forecast_period": "2027-01",
-    "predicted_quantity": 33.94,
+    "predicted_quantity": 36.96,
     "unit": "piece",
-    "model": "random_forest",
+    "model": "linear_regression",
     "model_version": "1.0.0",
     "demo_data": true,
     "review_needed": true
@@ -62,9 +62,9 @@
   {
     "material_id": "MAT-PANEL-001",
     "forecast_period": "2026-11",
-    "predicted_quantity": 143.37,
+    "predicted_quantity": 147.38,
     "unit": "piece",
-    "model": "random_forest",
+    "model": "linear_regression",
     "model_version": "1.0.0",
     "demo_data": true,
     "review_needed": true
@@ -72,9 +72,9 @@
   {
     "material_id": "MAT-PANEL-001",
     "forecast_period": "2026-12",
-    "predicted_quantity": 142.35,
+    "predicted_quantity": 149.88,
     "unit": "piece",
-    "model": "random_forest",
+    "model": "linear_regression",
     "model_version": "1.0.0",
     "demo_data": true,
     "review_needed": true
@@ -82,9 +82,9 @@
   {
     "material_id": "MAT-PANEL-001",
     "forecast_period": "2027-01",
-    "predicted_quantity": 142.0,
+    "predicted_quantity": 151.98,
     "unit": "piece",
-    "model": "random_forest",
+    "model": "linear_regression",
     "model_version": "1.0.0",
     "demo_data": true,
     "review_needed": true

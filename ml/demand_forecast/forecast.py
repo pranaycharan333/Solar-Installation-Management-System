@@ -82,39 +82,83 @@ def _models():
     }
 
 
-def evaluate(history: pd.DataFrame, minimum_rows: int = 18, holdout_months: int = 6) -> list[dict]:
-    """Compare a mean baseline and two small models on the latest months."""
+def evaluate(
+    history: pd.DataFrame,
+    minimum_rows: int = 24,
+    holdout_months: int = 6,
+    validation_months: int = 6,
+) -> list[dict]:
+    """Select models on a validation window and report separate future holdout metrics."""
+    if minimum_rows <= holdout_months + validation_months:
+        raise ValueError("minimum_rows must leave at least one training row")
     reports = []
     for material_id, group in history.groupby("material_id", sort=True):
         group = group.sort_values("usage_month").reset_index(drop=True)
         if len(group) < minimum_rows:
-            reports.append({"material_id": material_id, "status": "insufficient_history", "rows": len(group)})
+            reports.append({"material_id": material_id, "status": "insufficient_history", "rows": len(group), "minimum_rows": minimum_rows})
             continue
-        split = max(1, len(group) - holdout_months)
-        train, test = group.iloc[:split], group.iloc[split:]
-        if test.empty:
-            reports.append({"material_id": material_id, "status": "no_holdout_rows", "rows": len(group)})
+
+        holdout_start = len(group) - holdout_months
+        validation_start = holdout_start - validation_months
+        train = group.iloc[:validation_start]
+        validation = group.iloc[validation_start:holdout_start]
+        holdout = group.iloc[holdout_start:]
+        if train.empty or validation.empty or holdout.empty:
+            reports.append({"material_id": material_id, "status": "insufficient_split", "rows": len(group)})
             continue
+
         origin = train["usage_month"].iloc[0]
         x_train = _features(train["usage_month"].dt.strftime("%Y-%m"), origin)
-        x_test = _features(test["usage_month"].dt.strftime("%Y-%m"), origin)
-        y_train, y_test = train["quantity_used"].to_numpy(), test["quantity_used"].to_numpy()
-        metrics = {"training_mean": float(y_train.mean())}
+        x_validation = _features(validation["usage_month"].dt.strftime("%Y-%m"), origin)
+        y_train = train["quantity_used"].to_numpy()
+        y_validation = validation["quantity_used"].to_numpy()
+        validation_metrics = {}
+        validation_mae = {}
+        validation_mean = float(y_train.mean())
         for name, model in _models().items():
-            predicted = np.full(len(test), metrics["training_mean"]) if model is None else model.fit(x_train, y_train).predict(x_test)
-            metrics[name] = {
-                "mae": round(float(mean_absolute_error(y_test, predicted)), 3),
-                "rmse": round(float(np.sqrt(mean_squared_error(y_test, predicted))), 3),
+            predicted = np.full(len(validation), validation_mean) if model is None else model.fit(x_train, y_train).predict(x_validation)
+            validation_metrics[name] = {
+                "mae": round(float(mean_absolute_error(y_validation, predicted)), 3),
+                "rmse": round(float(np.sqrt(mean_squared_error(y_validation, predicted))), 3),
             }
-        reports.append({"material_id": material_id, "status": "evaluated", "train_rows": len(train), "holdout_rows": len(test), "holdout_start": test["usage_month"].iloc[0].strftime("%Y-%m"), "metrics": metrics})
+            validation_mae[name] = validation_metrics[name]["mae"]
+        selected_model = min(validation_mae, key=validation_mae.get)
+
+        fit_data = group.iloc[:holdout_start]
+        x_fit = _features(fit_data["usage_month"].dt.strftime("%Y-%m"), origin)
+        x_holdout = _features(holdout["usage_month"].dt.strftime("%Y-%m"), origin)
+        y_fit = fit_data["quantity_used"].to_numpy()
+        y_holdout = holdout["quantity_used"].to_numpy()
+        holdout_metrics = {}
+        holdout_mean = float(y_fit.mean())
+        for name, model in _models().items():
+            predicted = np.full(len(holdout), holdout_mean) if model is None else model.fit(x_fit, y_fit).predict(x_holdout)
+            holdout_metrics[name] = {
+                "mae": round(float(mean_absolute_error(y_holdout, predicted)), 3),
+                "rmse": round(float(np.sqrt(mean_squared_error(y_holdout, predicted))), 3),
+            }
+
+        reports.append({
+            "material_id": str(material_id),
+            "status": "evaluated",
+            "train_rows": len(train),
+            "validation_rows": len(validation),
+            "validation_start": validation["usage_month"].iloc[0].strftime("%Y-%m"),
+            "holdout_fit_rows": len(fit_data),
+            "holdout_rows": len(holdout),
+            "holdout_start": holdout["usage_month"].iloc[0].strftime("%Y-%m"),
+            "selected_model": selected_model,
+            "metrics": {"validation": validation_metrics, "holdout": holdout_metrics},
+        })
     return reports
 
 
-def forecast(history: pd.DataFrame, horizon_months: int = 3, minimum_rows: int = 18) -> list[dict]:
-    """Return advisory monthly forecasts using the lowest holdout-MAE model."""
+
+def forecast(history: pd.DataFrame, horizon_months: int = 3, minimum_rows: int = 24, holdout_months: int = 6, validation_months: int = 6) -> list[dict]:
+    """Return advisory forecasts using validation-selected models or the mean fallback."""
     if horizon_months < 1:
         raise ValueError("horizon_months must be at least 1")
-    reports = {r["material_id"]: r for r in evaluate(history)}
+    reports = {r["material_id"]: r for r in evaluate(history, minimum_rows, holdout_months, validation_months)}
     results = []
     for material_id, group in history.groupby("material_id", sort=True):
         group = group.sort_values("usage_month").reset_index(drop=True)
@@ -123,8 +167,7 @@ def forecast(history: pd.DataFrame, horizon_months: int = 3, minimum_rows: int =
         if report["status"] != "evaluated" or len(group) < minimum_rows:
             model_name = "training_mean"
         else:
-            errors = {name: values["mae"] for name, values in report["metrics"].items() if isinstance(values, dict)}
-            model_name = min(errors, key=errors.get)
+            model_name = report["selected_model"]
         origin = group["usage_month"].iloc[0]
         x_train = _features(group["usage_month"].dt.strftime("%Y-%m"), origin)
         if model_name == "training_mean":

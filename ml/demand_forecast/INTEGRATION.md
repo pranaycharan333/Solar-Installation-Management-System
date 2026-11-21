@@ -30,7 +30,7 @@ results = forecast(history_dataframe, horizon_months=3)
 results = forecast_records(request["history"], horizon_months=3)
 ```
 
-`history_dataframe` must use the fields above and contain parsed monthly usage rows. `forecast()` returns one result per material and forecast month. It selects the candidate with the lowest MAE on the latest six chronological observations; with fewer than 18 rows for a material, it falls back to the training mean. This choice is a prototype rule, not yet a production model-selection policy.
+`history_dataframe` must use the fields above and contain parsed monthly usage rows. `forecast()` returns one result per material and forecast month. It selects a candidate using a six-month chronological validation window, then reports its score on a separate, later six-month holdout; with fewer than 24 rows for a material, it falls back to the historical mean. This choice is a prototype rule, not yet a production model-selection policy.
 
 ## Provisional result shape
 

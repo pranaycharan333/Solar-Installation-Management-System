@@ -2,6 +2,54 @@
   "horizon_months": 3,
   "history": [
     {
+      "usage_month": "2024-11",
+      "material_id": "MAT-PANEL-001",
+      "material_name": "Solar panel",
+      "quantity_used": 110,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2024-12",
+      "material_id": "MAT-PANEL-001",
+      "material_name": "Solar panel",
+      "quantity_used": 101,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-01",
+      "material_id": "MAT-PANEL-001",
+      "material_name": "Solar panel",
+      "quantity_used": 103,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-02",
+      "material_id": "MAT-PANEL-001",
+      "material_name": "Solar panel",
+      "quantity_used": 105,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-03",
+      "material_id": "MAT-PANEL-001",
+      "material_name": "Solar panel",
+      "quantity_used": 117,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-04",
+      "material_id": "MAT-PANEL-001",
+      "material_name": "Solar panel",
+      "quantity_used": 119,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
       "usage_month": "2025-05",
       "material_id": "MAT-PANEL-001",
       "material_name": "Solar panel",
@@ -142,6 +190,54 @@
       "material_id": "MAT-PANEL-001",
       "material_name": "Solar panel",
       "quantity_used": 151,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2024-11",
+      "material_id": "MAT-INV-001",
+      "material_name": "Inverter",
+      "quantity_used": 26,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2024-12",
+      "material_id": "MAT-INV-001",
+      "material_name": "Inverter",
+      "quantity_used": 24,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-01",
+      "material_id": "MAT-INV-001",
+      "material_name": "Inverter",
+      "quantity_used": 24,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-02",
+      "material_id": "MAT-INV-001",
+      "material_name": "Inverter",
+      "quantity_used": 25,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-03",
+      "material_id": "MAT-INV-001",
+      "material_name": "Inverter",
+      "quantity_used": 28,
+      "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-04",
+      "material_id": "MAT-INV-001",
+      "material_name": "Inverter",
+      "quantity_used": 29,
       "unit": "piece",
       "is_synthetic": true
     },
@@ -287,6 +383,54 @@
       "material_name": "Inverter",
       "quantity_used": 37,
       "unit": "piece",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2024-11",
+      "material_id": "MAT-CABLE-001",
+      "material_name": "DC cable",
+      "quantity_used": 671,
+      "unit": "meter",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2024-12",
+      "material_id": "MAT-CABLE-001",
+      "material_name": "DC cable",
+      "quantity_used": 676,
+      "unit": "meter",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-01",
+      "material_id": "MAT-CABLE-001",
+      "material_name": "DC cable",
+      "quantity_used": 688,
+      "unit": "meter",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-02",
+      "material_id": "MAT-CABLE-001",
+      "material_name": "DC cable",
+      "quantity_used": 700,
+      "unit": "meter",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-03",
+      "material_id": "MAT-CABLE-001",
+      "material_name": "DC cable",
+      "quantity_used": 719,
+      "unit": "meter",
+      "is_synthetic": true
+    },
+    {
+      "usage_month": "2025-04",
+      "material_id": "MAT-CABLE-001",
+      "material_name": "DC cable",
+      "quantity_used": 731,
+      "unit": "meter",
       "is_synthetic": true
     },
     {
