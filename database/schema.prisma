@@ -1,0 +1,355 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../backend/node_modules/.prisma/client"
+}
+
+enum Role {
+  ADMIN
+  CUSTOMER
+  TECHNICIAN
+}
+
+enum ProjectStatus {
+  ENQUIRY
+  SURVEY_SCHEDULED
+  SURVEY_COMPLETED
+  ESTIMATE_SENT
+  ESTIMATE_APPROVED
+  INSTALLATION_SCHEDULED
+  INSTALLATION_IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum AssignmentType {
+  SURVEY
+  INSTALLATION
+  MAINTENANCE
+}
+
+enum EstimateStatus {
+  DRAFT
+  SENT
+  APPROVED
+  REJECTED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum PaymentStage {
+  ADVANCE
+  SURVEY_MILESTONE
+  INSTALLATION_MILESTONE
+  FINAL
+}
+
+enum TicketStatus {
+  OPEN
+  ASSIGNED
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum WarrantyStatus {
+  ACTIVE
+  EXPIRED
+  CLAIMED
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  passwordHash String
+  role         Role      @default(CUSTOMER)
+  fullName     String
+  phone        String?
+  address      String?
+  status       String    @default("ACTIVE")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  customerProfile   CustomerProfile?
+  technicianProfile TechnicianProfile?
+  projects          InstallationRequest[]  @relation("CustomerProjects")
+  assignedJobs      TechnicianAssignment[] @relation("TechAssignments")
+  surveys           SiteSurvey[]           @relation("TechSurveys")
+  serviceTickets    ServiceTicket[]        @relation("CustomerTickets")
+  notifications     Notification[]
+  auditLogs         AuditLog[]
+
+  @@map("users")
+}
+
+model CustomerProfile {
+  id                  Int      @id @default(autoincrement())
+  userId              Int      @unique
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  electricityProvider String?
+  consumerNumber      String?
+  monthlyBillAvg      Float?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@map("customer_profiles")
+}
+
+model TechnicianProfile {
+  id                  Int      @id @default(autoincrement())
+  userId              Int      @unique
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skills              String?
+  certificationNumber String?
+  status              String   @default("AVAILABLE")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@map("technician_profiles")
+}
+
+model InstallationRequest {
+  id                  Int            @id @default(autoincrement())
+  requestNumber       String         @unique
+  customerId          Int
+  customer            User           @relation("CustomerProjects", fields: [customerId], references: [id])
+  projectName         String
+  systemCapacityKw    Float
+  systemType          String
+  installationAddress String
+  status              ProjectStatus  @default(ENQUIRY)
+  progress            Int            @default(10)
+  notes               String?
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  assignments    TechnicianAssignment[]
+  surveys        SiteSurvey[]
+  estimates      Estimate[]
+  payments       Payment[]
+  checklists     InstallationChecklist[]
+  photographs    InstallationPhotograph[]
+  warranty       Warranty?
+  serviceTickets ServiceTicket[]
+
+  @@map("installation_requests")
+}
+
+model TechnicianAssignment {
+  id             Int                 @id @default(autoincrement())
+  projectId      Int
+  project        InstallationRequest @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  technicianId   Int
+  technician     User                @relation("TechAssignments", fields: [technicianId], references: [id])
+  assignedBy     Int?
+  assignmentType AssignmentType      @default(SURVEY)
+  scheduledDate  DateTime?
+  notes          String?
+  status         String              @default("ASSIGNED")
+  createdAt      DateTime            @default(now())
+
+  @@map("technician_assignments")
+}
+
+model SiteSurvey {
+  id                       Int                 @id @default(autoincrement())
+  projectId                Int
+  project                  InstallationRequest @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  technicianId             Int
+  technician               User                @relation("TechSurveys", fields: [technicianId], references: [id])
+  roofType                 String
+  roofAreaSqft             Float
+  shadingCondition         String
+  structuralFeasibility    String
+  electricalPanelCondition String
+  proposedCapacityKw       Float
+  surveyNotes              String?
+  status                   String              @default("COMPLETED")
+  conductedAt              DateTime            @default(now())
+  createdAt                DateTime            @default(now())
+
+  @@map("site_surveys")
+}
+
+model Estimate {
+  id             Int                 @id @default(autoincrement())
+  projectId      Int
+  project        InstallationRequest @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  estimateNumber String              @unique
+  totalAmount    Float
+  subsidyAmount  Float               @default(0)
+  netAmount      Float
+  status         EstimateStatus      @default(SENT)
+  validityDays   Int                 @default(30)
+  terms          String?
+  createdAt      DateTime            @default(now())
+  approvedAt     DateTime?
+  items          EstimateItem[]
+
+  @@map("estimates")
+}
+
+model EstimateItem {
+  id          Int      @id @default(autoincrement())
+  estimateId  Int
+  estimate    Estimate @relation(fields: [estimateId], references: [id], onDelete: Cascade)
+  name        String
+  unit        String
+  quantity    Float
+  unitCost    Float
+  lineTotal   Float
+  createdAt   DateTime @default(now())
+
+  @@map("estimate_items")
+}
+
+model Payment {
+  id             Int                 @id @default(autoincrement())
+  projectId      Int
+  project        InstallationRequest @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  amount         Float
+  paymentStage   PaymentStage
+  paymentMethod  String              @default("UPI/NetBanking")
+  transactionRef String?
+  status         PaymentStatus       @default(COMPLETED)
+  paidAt         DateTime            @default(now())
+  createdAt      DateTime            @default(now())
+
+  @@map("payments")
+}
+
+model Material {
+  id        Int        @id @default(autoincrement())
+  code      String     @unique
+  name      String
+  category  String
+  unit      String
+  unitCost  Float
+  createdAt DateTime   @default(now())
+  inventory Inventory?
+
+  @@map("materials")
+}
+
+model Inventory {
+  id                Int      @id @default(autoincrement())
+  materialId        Int      @unique
+  material          Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  quantityOnHand    Float
+  allocatedQuantity Float    @default(0)
+  reorderLevel      Float    @default(10)
+  location          String   @default("Central Warehouse, BLR")
+  updatedAt         DateTime @updatedAt
+
+  @@map("inventory")
+}
+
+model InstallationChecklist {
+  id            Int                 @id @default(autoincrement())
+  projectId     Int
+  project       InstallationRequest @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  stepKey       String
+  title         String
+  description   String?
+  isCompleted   Boolean             @default(false)
+  completedAt   DateTime?
+  completedBy   String?
+  remarks       String?
+  sequenceOrder Int                 @default(1)
+
+  @@map("installation_checklists")
+}
+
+model InstallationPhotograph {
+  id         Int                 @id @default(autoincrement())
+  projectId  Int
+  project    InstallationRequest @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  photoUrl   String
+  photoType  String
+  uploadedBy String?
+  notes      String?
+  uploadedAt DateTime            @default(now())
+
+  @@map("installation_photographs")
+}
+
+model Warranty {
+  id                    Int                 @id @default(autoincrement())
+  projectId             Int                 @unique
+  project               InstallationRequest @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  customerId            Int
+  certificateNumber     String              @unique
+  systemWarrantyYears   Int                 @default(5)
+  inverterWarrantyYears Int                 @default(10)
+  panelWarrantyYears    Int                 @default(25)
+  startDate             DateTime            @default(now())
+  endDate               DateTime
+  terms                 String?
+  status                WarrantyStatus      @default(ACTIVE)
+  createdAt             DateTime            @default(now())
+
+  @@map("warranties")
+}
+
+model ServiceTicket {
+  id              Int                  @id @default(autoincrement())
+  ticketNumber    String               @unique
+  customerId      Int
+  customer        User                 @relation("CustomerTickets", fields: [customerId], references: [id])
+  projectId       Int?
+  project         InstallationRequest? @relation(fields: [projectId], references: [id])
+  issueDescription String
+  priority        TicketPriority       @default(MEDIUM)
+  status          TicketStatus         @default(OPEN)
+  resolutionNotes String?
+  photoData       String?             @db.Text
+  visualFinding   String?
+  technicianId    Int?
+  createdAt       DateTime             @default(now())
+  resolvedAt      DateTime?
+
+  @@map("service_tickets")
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String   @default("INFO")
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+
+  @@map("notifications")
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  entity    String
+  entityId  String?
+  details   String?
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@map("audit_logs")
+}

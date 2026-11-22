@@ -30,3 +30,7 @@ React lets us compose repeated UI pieces (for example metric cards and status ba
 The role switch is only a presentation preview, not authentication or authorization. Backend permissions must still protect every API request. All displayed names, projects, inventory, and totals are illustrative mock data. Forecast and photo-analysis wording is advisory and calls for human review. Before connecting to Bharath's API, agree response shapes and move sample records behind a small service layer; put the API base URL in an environment variable such as `VITE_API_BASE_URL`.
 
 Screen map: Admin → overview, projects, customer/team/inventory/service/report navigation; Technician → work queue and schedule; Customer → project journey, payments/warranty, service request.
+
+## Lazy loading
+
+`src/DashboardContent.tsx` contains the role dashboard components and sample records. `src/App.tsx` loads it with React `lazy()` and wraps it in `Suspense`, which shows a loading placeholder while the dashboard JavaScript chunk downloads. This demonstrates code splitting; for this small demo, the speed improvement may be modest.
