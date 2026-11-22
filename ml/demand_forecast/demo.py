@@ -21,7 +21,8 @@ def main() -> None:
         material_id = report["material_id"]
         print(f"{material_id} - {report['status']}")
         if report["status"] != "evaluated":
-            print(f"  {report['rows']} rows; the historical-mean fallback is used.\n")
+            detail = f"; missing months: {', '.join(report['missing_months'])}" if report.get("missing_months") else ""
+            print(f"  {report['rows']} rows; the historical-mean fallback is used{detail}.\n")
             continue
         validation = report["metrics"]["validation"]
         holdout = report["metrics"]["holdout"]

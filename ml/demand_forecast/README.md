@@ -9,6 +9,7 @@ This is Chandra's first forecasting prototype. It uses **synthetic monthly demo 
 - `make_demo_data.py` regenerates the CSV deterministically. It makes the invented nature of the data visible and avoids hand-editing 108 rows.
 - `demo.py` prints a compact explanation of the validation scores, separate holdout scores, selected model, and advisory forecasts for an evaluator.
 - `requirements.txt` lists only the Python libraries this prototype imports, so another machine can reproduce the environment without installing unrelated packages.
+- `tests/test_forecast.py` checks the key data, validation-split, fallback, and output rules with Python built-in `unittest`.
 - `__init__.py` provides a stable import point for the backend adapter, instead of making it import functions from an implementation file directly.
 - `examples/forecast_request.json` shows a provisional JSON-style input; its rows are synthetic.
 - `examples/forecast_response.json` is an example response generated from the synthetic history. It lets teammates review the shape before the API field names are finalized.
@@ -26,18 +27,32 @@ python demo.py
 python forecast.py
 ```
 
+## Verify
+
+From the repository root, run the focused behavior checks with:
+
+```powershell
+python -m unittest discover -s ml/demand_forecast/tests -v
+```
+
+These checks verify the demo request, chronological split, fallback behavior, and invalid input handling. They do not prove real-world forecast accuracy.
+
 ## Current input fields
 
-`usage_month` (YYYY-MM), `material_id`, `material_name`, `quantity_used`, `unit`, and `is_synthetic`. This prototype assumes one row per material per month, with monthly quantities already aggregated. It forecasts three months by default. IDs are read as text to preserve leading zeroes. Blank values, negative or non-finite quantities, invalid synthetic flags, duplicate material-month rows, and inconsistent units are rejected with an explanation.
+`usage_month` (YYYY-MM), `material_id`, `material_name`, `quantity_used`, `unit`, and `is_synthetic`. This prototype assumes one row per material per month, with monthly quantities already aggregated. It forecasts three months by default and accepts only a positive integer forecast horizon. IDs are read as text to preserve leading zeroes. Blank values, negative or non-finite quantities, invalid synthetic flags, duplicate material-month rows, and inconsistent units are rejected with an explanation. A gap between recorded months is reported as incomplete history and uses the mean fallback; the module does not assume a missing row means zero usage.
 
 ## Import and example response
 
 From the repository root, import the public functions with `from ml.demand_forecast import evaluate, forecast, forecast_records, load_history`. Then call `history = load_history()`, `metrics = evaluate(history)`, and `results = forecast(history)`. A backend handling JSON records can pass `request["history"]` to `forecast_records(records, horizon_months=3)`; this adapter uses the same validation as CSV input. The example response is intentionally generated from demo data and is provisional until Bharath confirms the contract.
 
+## Optional HTTP adapter
+
+`api.py` wraps the same model in a small FastAPI service so teammates can try the JSON request over HTTP. From the repository root, install `ml/demand_forecast/service-requirements.txt` and run `python -m uvicorn ml.demand_forecast.api:app --reload`. The provisional endpoints are `GET /health` and `POST /api/v1/forecast`; interactive API documentation is available at `/docs`. Invalid request shapes or history return HTTP 422 with an `error.code` and `error.message`. This adapter has no login, database, stock updates, or purchasing behavior, and Bharath must confirm or replace the route and error contract before production integration.
+
 ## Output fields
 
-Each forecast row includes `material_id`, `forecast_period`, `predicted_quantity`, `unit`, `model`, `model_version`, `demo_data`, and `review_needed`. These are provisional fields; confirm names and units with Bharath before backend integration.
+Each forecast row includes `material_id`, `forecast_period`, `predicted_quantity`, `unit`, `model`, `model_version`, `fallback_reason`, `demo_data`, and `review_needed`. `fallback_reason` is `null` when a regression model is selected and identifies incomplete or insufficient history when the mean fallback is used. `demo_data` is true if any history row for that material is synthetic, so mixing synthetic and real rows cannot make a forecast appear production-only. These are provisional fields; confirm names and units with Bharath before backend integration.
 
 ## Evaluation and limits
 
-The most recent six months are a final holdout. The six months before them are a validation window used to select a model; only earlier months train that selection. After selection, each model is refit on all pre-holdout months and scored on the untouched holdout. This avoids choosing a model based on the same months used to report its final score. MAE and RMSE are reported for both windows. The chronological split better matches forecasting future months than a random split, which would mix past and future. Items need at least 24 monthly rows to receive the validation and holdout comparison; shorter histories use the mean fallback. The demo has only 36 invented months per item, so the comparison shows how the code works, not which model will perform well on SunPower history. With real data, inspect gaps, changes in units, missing months, and enough seasonal cycles before trusting a model. The prediction function never calculates inventory balance, costs, reorder quantity, or purchases.
+The most recent six months are a final holdout. The six months before them are a validation window used to select a model; only earlier months train that selection. After selection, each model is refit on all pre-holdout months and scored on the untouched holdout. This avoids choosing a model based on the same months used to report its final score. MAE and RMSE are reported for both windows. Predictions are floored at zero before scoring and output because negative material demand is not feasible. The chronological split better matches forecasting future months than a random split, which would mix past and future. Window sizes and the minimum history size must be positive whole-month counts, and the minimum history must leave at least one training month after validation and holdout. Items need at least 24 monthly rows to receive the validation and holdout comparison; shorter histories use the mean fallback. The demo has only 36 invented months per item, so the comparison shows how the code works, not which model will perform well on SunPower history. With real data, inspect gaps, changes in units, missing months, and enough seasonal cycles before trusting a model. The prediction function never calculates inventory balance, costs, reorder quantity, or purchases.

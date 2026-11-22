@@ -32,6 +32,8 @@ results = forecast_records(request["history"], horizon_months=3)
 
 `history_dataframe` must use the fields above and contain parsed monthly usage rows. `forecast()` returns one result per material and forecast month. It selects a candidate using a six-month chronological validation window, then reports its score on a separate, later six-month holdout; with fewer than 24 rows for a material, it falls back to the historical mean. This choice is a prototype rule, not yet a production model-selection policy.
 
+An optional FastAPI wrapper is available in `api.py` for trying the current JSON shape over HTTP: `GET /health` and `POST /api/v1/forecast`. It uses HTTP 422 errors shaped as `{"error":{"code":"...","message":"..."}}`. This route and error shape remain provisional and do not replace the shared backend's authentication, persistence, or API contract.
+
 ## Provisional result shape
 
 ```json
@@ -42,18 +44,19 @@ results = forecast_records(request["history"], horizon_months=3)
   "unit": "piece",
   "model": "linear_regression",
   "model_version": "1.0.0",
+  "fallback_reason": null,
   "demo_data": true,
   "review_needed": true
 }
 ```
 
-The generated example is in `examples/forecast_response.json`. All forecast values remain advisory. The backend must continue to calculate stock balances, reorder quantities, prices, and purchase orders from authoritative records and business rules.
+The generated example is in `examples/forecast_response.json`. `fallback_reason` is `null` when a regression model is selected and contains a status such as `incomplete_history` when the mean fallback is used. All forecast values remain advisory. The backend must continue to calculate stock balances, reorder quantities, prices, and purchase orders from authoritative records and business rules.
 
 ## Confirm with Bharath
 
 1. Is monthly actual usage the right target, and what database events count as material used?
 2. Which inventory identifier and canonical unit should the model receive for each material?
-3. How should a missing month be represented: explicit zero usage, or incomplete data that should be excluded?
+3. Missing months currently mark that material history incomplete and trigger the mean fallback. Should a true zero-usage month arrive as an explicit zero row?
 4. What history window and forecast horizon should the backend request?
 5. Does the backend want to call `forecast_records()` with JSON-style records, or construct a DataFrame directly? The adapter exists, while its field names remain provisional.
 6. What response envelope, error shape, and model-version format should the endpoint use?

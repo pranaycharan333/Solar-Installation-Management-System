@@ -34,15 +34,16 @@ def _validate_history(frame: pd.DataFrame) -> pd.DataFrame:
     if missing:
         raise ValueError(f"History is missing required columns: {', '.join(sorted(missing))}")
 
-    text_columns = ["usage_month", "material_id", "material_name", "unit", "is_synthetic"]
+    text_columns = ["material_id", "material_name", "unit", "is_synthetic"]
     for column in text_columns:
         frame[column] = frame[column].astype("string").str.strip()
         if frame[column].isna().any() or frame[column].eq("").any():
             raise ValueError(f"{column} cannot contain blank values")
 
-    frame["usage_month"] = pd.to_datetime(
-        frame["usage_month"] + "-01", format="%Y-%m-%d", errors="raise"
-    )
+    frame["usage_month"] = frame["usage_month"].astype("string").str.strip()
+    if frame["usage_month"].isna().any() or frame["usage_month"].eq("").any():
+        raise ValueError("usage_month cannot contain blank values")
+    frame["usage_month"] = pd.to_datetime(frame["usage_month"], errors="raise").dt.to_period("M").dt.to_timestamp()
     frame["quantity_used"] = pd.to_numeric(frame["quantity_used"], errors="raise")
     quantities = frame["quantity_used"].to_numpy(dtype=float)
     if not np.isfinite(quantities).all():
@@ -82,6 +83,20 @@ def _models():
     }
 
 
+def _nonnegative_metrics(actual: np.ndarray, predicted: np.ndarray) -> dict:
+    """Score feasible quantities using the same zero floor as forecast output."""
+    feasible = np.maximum(0.0, np.asarray(predicted, dtype=float))
+    return {
+        "mae": round(float(mean_absolute_error(actual, feasible)), 3),
+        "rmse": round(float(np.sqrt(mean_squared_error(actual, feasible))), 3),
+    }
+
+
+def _require_positive_integer(value: int, name: str) -> None:
+    if isinstance(value, bool) or not isinstance(value, int) or value < 1:
+        raise ValueError(f"{name} must be a positive integer")
+
+
 def evaluate(
     history: pd.DataFrame,
     minimum_rows: int = 24,
@@ -89,11 +104,26 @@ def evaluate(
     validation_months: int = 6,
 ) -> list[dict]:
     """Select models on a validation window and report separate future holdout metrics."""
+    history = _validate_history(history)
+    _require_positive_integer(minimum_rows, "minimum_rows")
+    _require_positive_integer(holdout_months, "holdout_months")
+    _require_positive_integer(validation_months, "validation_months")
     if minimum_rows <= holdout_months + validation_months:
         raise ValueError("minimum_rows must leave at least one training row")
     reports = []
     for material_id, group in history.groupby("material_id", sort=True):
         group = group.sort_values("usage_month").reset_index(drop=True)
+        observed_months = group["usage_month"].dt.to_period("M")
+        expected_months = pd.period_range(observed_months.min(), observed_months.max(), freq="M")
+        missing_months = [str(month) for month in expected_months.difference(observed_months)]
+        if missing_months:
+            reports.append({
+                "material_id": str(material_id),
+                "status": "incomplete_history",
+                "rows": len(group),
+                "missing_months": missing_months,
+            })
+            continue
         if len(group) < minimum_rows:
             reports.append({"material_id": material_id, "status": "insufficient_history", "rows": len(group), "minimum_rows": minimum_rows})
             continue
@@ -117,10 +147,7 @@ def evaluate(
         validation_mean = float(y_train.mean())
         for name, model in _models().items():
             predicted = np.full(len(validation), validation_mean) if model is None else model.fit(x_train, y_train).predict(x_validation)
-            validation_metrics[name] = {
-                "mae": round(float(mean_absolute_error(y_validation, predicted)), 3),
-                "rmse": round(float(np.sqrt(mean_squared_error(y_validation, predicted))), 3),
-            }
+            validation_metrics[name] = _nonnegative_metrics(y_validation, predicted)
             validation_mae[name] = validation_metrics[name]["mae"]
         selected_model = min(validation_mae, key=validation_mae.get)
 
@@ -133,10 +160,7 @@ def evaluate(
         holdout_mean = float(y_fit.mean())
         for name, model in _models().items():
             predicted = np.full(len(holdout), holdout_mean) if model is None else model.fit(x_fit, y_fit).predict(x_holdout)
-            holdout_metrics[name] = {
-                "mae": round(float(mean_absolute_error(y_holdout, predicted)), 3),
-                "rmse": round(float(np.sqrt(mean_squared_error(y_holdout, predicted))), 3),
-            }
+            holdout_metrics[name] = _nonnegative_metrics(y_holdout, predicted)
 
         reports.append({
             "material_id": str(material_id),
@@ -156,8 +180,8 @@ def evaluate(
 
 def forecast(history: pd.DataFrame, horizon_months: int = 3, minimum_rows: int = 24, holdout_months: int = 6, validation_months: int = 6) -> list[dict]:
     """Return advisory forecasts using validation-selected models or the mean fallback."""
-    if horizon_months < 1:
-        raise ValueError("horizon_months must be at least 1")
+    history = _validate_history(history)
+    _require_positive_integer(horizon_months, "horizon_months")
     reports = {r["material_id"]: r for r in evaluate(history, minimum_rows, holdout_months, validation_months)}
     results = []
     for material_id, group in history.groupby("material_id", sort=True):
@@ -166,8 +190,10 @@ def forecast(history: pd.DataFrame, horizon_months: int = 3, minimum_rows: int =
         row = group.iloc[-1]
         if report["status"] != "evaluated" or len(group) < minimum_rows:
             model_name = "training_mean"
+            fallback_reason = report["status"] if report["status"] != "evaluated" else "insufficient_history"
         else:
             model_name = report["selected_model"]
+            fallback_reason = None
         origin = group["usage_month"].iloc[0]
         x_train = _features(group["usage_month"].dt.strftime("%Y-%m"), origin)
         if model_name == "training_mean":
@@ -191,7 +217,9 @@ def forecast(history: pd.DataFrame, horizon_months: int = 3, minimum_rows: int =
                 "unit": str(row["unit"]),
                 "model": model_name,
                 "model_version": "1.0.0",
-                "demo_data": bool(group["is_synthetic"].astype(str).str.lower().eq("true").all()),
+                "fallback_reason": fallback_reason,
+                # A forecast that used any synthetic history must remain labeled as demo data.
+                "demo_data": bool(group["is_synthetic"].astype(str).str.lower().eq("true").any()),
                 "review_needed": True,
             })
     return results
