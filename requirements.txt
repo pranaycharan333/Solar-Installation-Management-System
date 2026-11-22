@@ -1,0 +1,3 @@
+# Install the shared Python dependencies for both ML modules.
+-r ml/demand_forecast/requirements.txt
+-r ml/photo_inspection/requirements.txt
